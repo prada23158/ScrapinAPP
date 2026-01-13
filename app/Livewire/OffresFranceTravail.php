@@ -15,7 +15,7 @@ class OffresFranceTravail extends Component
     {
         $query = OffresFT::orderBy('created_at', 'desc');
 
-        $offres = $query->paginate(10);
+        $offres = $query->paginate(50);
 
         // dd($offres);
 

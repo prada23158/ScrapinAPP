@@ -17,8 +17,12 @@
             <flux:navlist.group :heading="__('Platform')" class="grid">
                 <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
                     wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
-                <flux:navlist.item icon="bolt" :href="route('agents')" :current="request()->routeIs('agents')"
-                    wire:navigate>{{ __('Mes Scrappings') }}</flux:navlist.item>
+                <flux:navlist.item icon="bolt" :href="route('francetravail')"
+                    :current="request()->routeIs('francetravail')" wire:navigate>{{ __('Mes Scrappings') }}
+                </flux:navlist.item>
+                <flux:navlist.item icon="bolt" :href="route('keywords')" :current="request()->routeIs('keywords')"
+                    wire:navigate>{{ __('Mots-clés') }}
+                </flux:navlist.item>
             </flux:navlist.group>
         </flux:navlist>
 

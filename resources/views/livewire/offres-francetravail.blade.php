@@ -28,7 +28,7 @@
                                     href="{{ $offre->lien_offre }}">{{ $offre->entreprise }}</a></u>
                         </td>
                         <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
-                            {{ \Carbon\Carbon::parse($offre->created_at)->format('d/m/Y') }}
+                            {{ \Carbon\Carbon::parse($offre->created_at)->format('d/m/Y H:i:s') }}
                         </td>
                         @if ($offre->status == '1')
                             <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600" style="color: red;">

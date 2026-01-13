@@ -28,7 +28,7 @@
                         <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">{{ $info->adresse1 }}
                         </td>
                         <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
-                            {{ \Carbon\Carbon::parse($info->date_insertion)->format('d/m/Y') }}
+                            {{ \Carbon\Carbon::parse($info->date_insertion)->format('d/m/Y H:i:s') }}
                         </td>
                         @if ($info->statut == '1')
                             <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600" style="color: red;">

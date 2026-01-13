@@ -16,27 +16,38 @@
                 </tr>
             </thead>
             <tbody>
-                <?php $i = 1; ?>
-                @foreach ($numeros as $numero)
-                    <tr class="even:bg-neutral-50 dark:even:bg-neutral-700/50">
-                        <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">{{ $i++ }}</td>
-                        <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
-                            {{ $numero->entreprise }}
-                        </td>
-                        <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">{{ $numero->telephone }}
-                        </td>
-                        <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
-                            {{ \Carbon\Carbon::parse($numero->created_at)->format('d/m/Y') }}
-                        </td>
-                        <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600" style="color: seagreen">
-                            <flux:button variant="danger" color="red" wire:click="delete({{ $numero->id }})">
-                                Supprimer
-                            </flux:button>
-                            <flux:separator variant="subtle" />
-
+                @if ($numeros->isEmpty())
+                    <tr>
+                        <td colspan="5" class="px-4 py-2 border-t border-zinc-200 dark:border-zinc-700 text-center">
+                            <p class="">Aucune information disponible.</p>
                         </td>
                     </tr>
-                @endforeach
+                @else
+                    <?php $i = 1; ?>
+                    @foreach ($numeros as $numero)
+                        <tr class="even:bg-neutral-50 dark:even:bg-neutral-700/50">
+                            <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">{{ $i++ }}
+                            </td>
+                            <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
+                                {{ $numero->entreprise }}
+                            </td>
+                            <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
+                                {{ $numero->telephone }}
+                            </td>
+                            <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
+                                {{ \Carbon\Carbon::parse($numero->created_at)->format('d/m/Y H:i:s') }}
+                            </td>
+                            <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600"
+                                style="color: seagreen">
+                                <flux:button variant="danger" color="red" wire:click="delete({{ $numero->id }})">
+                                    Supprimer
+                                </flux:button>
+                                <flux:separator variant="subtle" />
+
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
             </tbody>
         </table>
     </div>

@@ -9,7 +9,7 @@ class NumerosFranceTravail extends Component
     public function render()
     {
         $query = NumerosFT::orderBy('created_at', 'desc');
-        $numeros = $query->paginate(10);
+        $numeros = $query->paginate(50);
         return view('livewire.numeros-france-travail', [
             'numeros' => $numeros,
         ]);

@@ -9,7 +9,7 @@ class ContactsFranceTravail extends Component
     public function render()
     {
         $query = ContactsFT::orderBy('created_at', 'desc');
-        $contacts = $query->paginate(10);
+        $contacts = $query->paginate(50);
         return view('livewire.contacts-france-travail', [
             'contacts' => $contacts,
         ]);

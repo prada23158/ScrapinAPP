@@ -7,6 +7,7 @@ use App\Livewire\FranceTravail;
 use App\Livewire\Agents;
 use App\Livewire\Indeed;
 use App\Livewire\LinkFT;
+use Illuminate\Auth\Events\Verified;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,6 +20,8 @@ Route::view('dashboard', 'dashboard')
 Route::view('utilisateurs', 'utilisateurs')
     ->middleware(['auth', 'verified'])
     ->name('utilisateurs');
+// les mots clés
+Route::view('keywords','keywords')->middleware(['auth','verified'])->name('keywords');
 // Scrapping routes debut
 Route::view('agents', 'agents')
     ->middleware(['auth', 'verified'])
@@ -53,6 +56,29 @@ Route::view('saintgraal', 'saintgraal-francetravail')
     ->middleware(['auth', 'verified'])
     ->name('saintgraal-francetravail');
 // FIN CARTES France Travail
+
+// DEBUT CARTES INDEED
+// STEP 1 - offres Indeed
+Route::view('offres-indeed', 'offres-indeed')
+    ->middleware(['auth', 'verified'])
+    ->name('offres-indeed');
+// STEP 2 - infos entreprises Indeed
+Route::view('infos-indeed', 'infos-indeed')
+    ->middleware(['auth', 'verified'])
+    ->name('infos-indeed');
+// STEP 3 - contacts entreprises Indeed
+Route::view('contacts-indeed', 'contacts-indeed')
+    ->middleware(['auth', 'verified'])
+    ->name('contacts-indeed');
+// STEP 4 - numéros entreprises Indeed
+Route::view('telephones-indeed', 'telephones-indeed')
+    ->middleware(['auth', 'verified'])
+    ->name('telephones-indeed');
+// STEP 5 - saint graal Indeed
+Route::view('graal-indeed', 'graal-indeed')
+    ->middleware(['auth', 'verified'])
+    ->name('graal-indeed');
+// FIN CARTES INDEED
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');

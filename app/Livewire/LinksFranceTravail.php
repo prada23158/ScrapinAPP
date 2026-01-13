@@ -9,7 +9,6 @@ use Livewire\WithPagination;
 
 class LinksFranceTravail extends Component
 {
-    
     use WithPagination;
 
     // public $links = [];
@@ -39,13 +38,13 @@ class LinksFranceTravail extends Component
     {
         $query = LinksFT::orderBy('created_aat', 'desc');
         
-         // Appliquer le filtre si nécessaire
+        // Appliquer le filtre si nécessaire
         
         if ($this->statusFilter !== 'all') {
             $query->where('status', $this->statusFilter);
         }
         
-        $links = $query->paginate(10);
+        $links = $query->paginate(50);
 
         // on passe les données à la vue
 

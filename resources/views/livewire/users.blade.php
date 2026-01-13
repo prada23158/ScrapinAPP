@@ -53,7 +53,7 @@
                         <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">{{ $user->name }}</td>
                         <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">{{ $user->email }}</td>
                         <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
-                            {{ \Carbon\Carbon::parse($user->created_at)->format('d/m/Y H:i') }}
+                            {{ \Carbon\Carbon::parse($user->created_at)->format('d/m/Y H:i:s') }}
                         </td>
                         <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
                             <flux:button size="sm" wire:click="edit({{ $user->id }})">Modifier

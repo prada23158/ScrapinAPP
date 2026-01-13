@@ -36,7 +36,25 @@ return [
     ],
 
     'n8n' => [
-    'francetravail_url' => env('N8N_FRANCETRAVAIL_URL'),
+        'api_key' => env('API_KEY'),
+        'workflow_One_ID_FT' => env('WORKFLOW_ONE_ID_FRANCETRAVAIL'),
+        'railway_host' => env('RAILWAY_HOST', 'https://primary-production-cd85.up.railway.app'),
+    ],
+
+    'n8n-prod' => [
+        'stepone_francetravail_prod' => env('N8N_StepOne_FRANCETRAVAIL_PROD'),
+    ],
+
+    'n8n-test' => [
+        'stepone_francetravail_test' => env('N8N_StepOne_FRANCETRAVAIL_TEST'),
+    ],
+
+    'RAILWAY_HOST' => [
+        'railway_host' => env('RAILWAY_HOST'),
+    ],
+
+    'apiKeys' => [
+        'api_key' => env('API_KEY'),
     ],
 
 

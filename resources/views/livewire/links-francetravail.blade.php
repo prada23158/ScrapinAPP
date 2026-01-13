@@ -13,6 +13,7 @@
                         {{ __('Date de création') }}</th>
                     <th scope="col" class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
                         {{ __('Statut') }}</th>
+
                     <th scope="col" class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
                         {{ __('Actions') }}</th>
                 </tr>

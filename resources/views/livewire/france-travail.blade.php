@@ -1,19 +1,10 @@
 <div class="size-40">
     <livewire:agents />
     <livewire:nav-agents />
-    <livewire:francetravail-modal />
+    <livewire:francetravail-error />
+    {{-- <livewire:francetravail-success /> --}}
     {{-- composant livewire pour afficher les liens France Travail  --}}
     {{-- <livewire:links-francetravail /> --}}
-    @if (session()->has('message'))
-        <div class="alert alert-success" role="alert">
-            {{ session('message') }}
-        </div>
-    @elseif (session()->has('error'))
-        <div class="alert alert-danger" role="alert">
-            {{ session('error') }}
-        </div>
-    @endif
-    {{-- Metrics Grid --}}
     <div class="px-6 pb-12 sm:px-6 lg:px-4">
         <div class="w-32 mx-auto">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -30,7 +21,7 @@
                     </div>
                     <h3 class="text-gray-600 text-sm font-medium mb-2">Offres France Travail sur google</h3>
                     <p class="text-3xl font-bold text-gray-900">Collecte des liens liés aux mots clés</p>
-                    <flux:modal.trigger name="modal-francetravail">
+                    <flux:modal.trigger name="francetravail-error">
                         <flux:button variant="primary" color="cyan" class="mt-4 w-full"
                             wire:click="stepOneFrancetravailWorkflow">
                             Activer
