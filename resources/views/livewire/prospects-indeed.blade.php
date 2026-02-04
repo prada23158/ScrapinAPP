@@ -1,4 +1,4 @@
-<flux:modal name="francetravail-error" class="min-w-[96rem]">
+<flux:modal name="prospects-indeed" class="min-w-[96rem]">
     {{-- <p>composant: {{ get_class($this) }}</p> --}}
     <div class="space-y-6">
         @if (!$this->success)
@@ -42,13 +42,20 @@
                 @if ($data > 0)
                     <div class="mt-4 p-4 rounded bg-gray-100" wire:poll.5s="refreshCount">
                         <h3 class="text-lg font-medium mb-2">
-                            {{ __('Nombre de liens trouvés: ') }} {{ $data }}
+                            {{ __('Nombre de contacts trouvés: ') }} {{ $data }}
                         </h3>
                     </div>
+                    @if ($contacts_restants > 0)
+                        <div class="mt-4 p-4 rounded bg-yellow-100">
+                            <h3 class="text-lg font-medium mb-2">
+                                {{ __('Nombre de contacts restants : ') }} {{ $contacts_restants }}
+                            </h3>
+                        </div>
+                    @endif
                 @else
                     <div class="mt-4 p-4 rounded">
                         <flux:text class="mt-2">
-                            {{ __('Aucun lien enregistré.') }}
+                            {{ __('Aucun contact trouvé.') }}
                         </flux:text>
                     </div>
                 @endif
@@ -62,28 +69,30 @@
                 <div class="flex justify-center items-center">
                     <img src="success.png" alt="Success" class="w-16 h-16 mt-4 sm:h-32 sm:w-32">
                 </div>
-
-                <flux:text class="mt-2">
-                    {{ $response['message'] ?? 'Workflow démarré.' }}
-                    <br>
-                    {{ __('Veuillez patienter quelques instants avant de recharger la page.') }}
-                </flux:text>
                 @if ($data > 0)
                     <div class="mt-4 p-4 rounded bg-gray-100" wire:poll.5s="refreshCount">
                         <h3 class="text-lg font-medium mb-2">
-                            {{ __('Nombre de liens trouvés: ') }} {{ $data }}
+                            {{ __('Nombre de contacts trouvés: ') }} {{ $data }}
                         </h3>
                     </div>
+                    @if ($contacts_restants > 0)
+                        <div class="mt-4 p-4 rounded bg-yellow-100">
+                            <h3 class="text-lg font-medium mb-2">
+                                {{ __('Nombre de contacts restants : ') }} {{ $contacts_restants }}
+                            </h3>
+                        </div>
+                    @endif
                 @else
-                    <div class="mt-4 p-4 rounded">
+                    <div class="mt-4 p-4 rounded" wire:poll.5s="refreshCount">
                         <flux:text class="mt-2">
-                            {{ __('Aucun lien enregistré.') }}
+                            {{ __('Aucun contact trouvé.') }}
                         </flux:text>
                     </div>
                 @endif
             </div>
         @elseif ($this->success && in_array($this->status, ['running', 'waiting']))
             <div class="mt-8 p-4 rounded bg-blue-50 border border-blue-200">
+                <flux:heading size="lg">Vous avez Activé le Workflow</flux:heading>
                 <flux:badge variant='solid' color='blue'>
                     {{ __('En cours...') }}
                 </flux:badge>
@@ -95,13 +104,20 @@
             @if ($data > 0)
                 <div class="mt-4 p-4 rounded bg-gray-100" wire:poll.5s="refreshCount">
                     <h3 class="text-lg font-medium mb-2">
-                        {{ __('Nombre de liens trouvés: ') }} {{ $data }}
+                        {{ __('Nombre de contacts trouvés: ') }} {{ $data }}
                     </h3>
                 </div>
+                @if ($contacts_restants > 0)
+                    <div class="mt-4 p-4 rounded bg-yellow-100">
+                        <h3 class="text-lg font-medium mb-2">
+                            {{ __('Nombre de contacts restants : ') }} {{ $contacts_restants }}
+                        </h3>
+                    </div>
+                @endif
             @else
                 <div class="mt-4 p-4 rounded">
                     <flux:text class="mt-2">
-                        {{ __('Aucun lien enregistré.') }}
+                        {{ __('Aucun contact trouvé.') }}
                     </flux:text>
                 </div>
             @endif

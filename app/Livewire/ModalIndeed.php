@@ -3,12 +3,12 @@
 namespace App\Livewire;
 use Livewire\Component;
 use Livewire\Attributes\On;
-use App\Models\LinksFT;
+use App\Models\ApifyIndeed;
 use Carbon\Carbon;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-class FrancetravailError extends Component
+class ModalIndeed extends Component
 {
 
     public bool $success = true;
@@ -22,6 +22,9 @@ class FrancetravailError extends Component
     public $response = null;
     public string $apiKey = '';
     public string $workflowID = '';
+    public int $dataCount = 0;
+    public int $offresScrapped = 0;
+    public int $offresNotScrapped = 0;
 
     // Propriétés privées pour la configuration
     private string $railway_host;
@@ -29,25 +32,43 @@ class FrancetravailError extends Component
 
     public function mount(): void
     {
-        $this->workflowUrl = config('services.n8n-prod.stepone_francetravail_prod') ?? '';
+        $this->workflowUrl = config('services.n8n-prod.stepone_indeed_prod');
+        // $this->workflowUrl = config('services.n8n-test.stepone_indeed_test');
         $this->railway_host = config('services.RAILWAY_HOST.railway_host');
         $this->refreshCount(); // ✅ calcule data une fois au chargement
     }
 
-    protected $listeners = ['refreshLinksCount' => 'refreshCount'];
+    protected $listeners = ['refreshOffresCount' => 'refreshCount'];
+
+    // compter le nombre offres enregistrésdans la table offresindeed
+    public function getOffresCount(): array
+    {
+        // nombre d'offres dans la table ApifyIndeed
+        $OffresCount = ApifyIndeed::whereNotNull('date_insertion')
+        ->selectRaw('
+            SUM(CASE WHEN date_insertion = 1 THEN 1 ELSE 0 END) AS scrapped,
+            SUM(CASE WHEN date_insertion = 0 THEN 1 ELSE 0 END) AS not_scrapped,
+            COUNT(*) AS total
+            ')
+        ->first();
+
+        return [
+            'offres' => $OffresCount->total ?? 0,
+            'scrapped' => $OffresCount->scrapped ?? 0,
+            'not_scrapped' => $OffresCount->not_scrapped ?? 0,
+        ];
+    }
 
     public function refreshCount(): void
     {
-        $this->data = $this->getLinksCountToday();
+        $stats = $this->getOffresCount();
+
+        $this->data = $stats['offres'];
+        $this->offresScrapped = $stats['scrapped'];
+        $this->offresNotScrapped = $stats['not_scrapped'];
     }
 
-    // compter le nombre liens enregistrés aujourd'hui dans la table links_ft
-    public function getLinksCountToday(): int
-    {
-        return LinksFT::count(); // ✅ created_at
-    }
-
-    #[On('ft-error')]
+    #[On('IndeedOne-error')]
     public function setError(array $data): void
     {
         $this->success = false;
@@ -60,10 +81,9 @@ class FrancetravailError extends Component
 
         // Réinitialiser les données de succès
         $this->response = null;
-        
     }
 
-    #[On('ft-success')]
+    #[On('IndeedOne-success')]
     public function setSuccess(array $data): void
     {
         $this->success = (bool) ($data['success'] ?? true);
@@ -81,16 +101,16 @@ class FrancetravailError extends Component
         $this->refreshCount();
     }
 
-    public function stepOneFrancetravailWorkflow()
+        public function stepOneIndeedWorkflow()
     {
-        $this->workflowUrl = config('services.n8n-prod.stepone_francetravail_prod');
-        // $this->workflowUrl = config('services.n8n-test.stepone_francetravail_test');
+        $this->workflowUrl = config('services.n8n-prod.stepone_indeed_prod');
+        // $this->workflowUrl = config('services.n8n-test.stepone_indeed_test');
         // récuperer la dernière exécution du workflow
         $this->railway_host = config('services.RAILWAY_HOST.railway_host');
         // api_Key n8n
         $this->apiKey = config('services.n8n.api_key');
         // ID Workflow n8n
-        $this->workflowID = config('services.n8n.workflow_One_ID_FT');
+        $this->workflowID = config('services.n8n.workflow_One_ID_INDEED');
         // Envoyer une requête POST au workflow externe
         // z$response = Http::get($this->workflowUrl);
         // dd($response->json());
@@ -104,9 +124,9 @@ class FrancetravailError extends Component
             $data = Http::withHeaders([
                 'X-N8N-API-KEY' => config('services.n8n.api_key')
             ])
-                ->timeout(30)
+                ->timeout(10)
                 ->get($this->railway_host . '/api/v1/executions', [
-                    'workflowId' => config('services.n8n.workflow_One_ID_FT'),
+                    'workflowId' => config('services.n8n.workflow_One_ID_INDEED'),
                     'limit' => 1
                 ]);
 
@@ -124,7 +144,7 @@ class FrancetravailError extends Component
                     'hint' => $hint,
                 ]);
 
-                $this->dispatch('ft-error', [
+                $this->dispatch('indeedOne-error', [
                     'success' => false,
                     'errorCode' => $code,
                     'errorMessage' => $message,
@@ -142,7 +162,7 @@ class FrancetravailError extends Component
                     'message' => $message
                 ]);
 
-                $this->dispatch('ft-error', [
+                $this->dispatch('indeedOne-error', [
                     'success' => false,
                     'status' => 'error',
                     'finished' => 'false',
@@ -164,7 +184,7 @@ class FrancetravailError extends Component
             // dd($execution);
             if (!$execution) {
                 logger()->warning('Aucune exécution trouvée');
-                $this->dispatch('ft-error', [
+                $this->dispatch('indeedOne-error', [
                     'success' => false,
                     'errorCode' => 404,
                     'errorMessage' => 'Aucune exécution trouvée',
@@ -196,7 +216,7 @@ class FrancetravailError extends Component
 
             // ⚠️ Attention : dispatch correct selon le statut
             if ($status === 'success' && $finished) {
-                $this->dispatch('ft-success', [
+                $this->dispatch('indeedOne-success', [
                     'success' => true,
                     'response' => $success,
                     'status' => $status,
@@ -204,8 +224,8 @@ class FrancetravailError extends Component
                     'startedAt' => $startedAt,
                     'stoppedAt' => $stoppedAt,
                 ]);
-            } elseif (in_array($status, ['error', 'failed'])) {
-                $this->dispatch('ft-error', [
+            } elseif (in_array($status, ['error', 'failed', 'canceled'])) {
+                $this->dispatch('indeedOne-error', [
                     'success' => false,
                     'response' => $success,
                     'status' => $status,
@@ -215,7 +235,7 @@ class FrancetravailError extends Component
                 ]);
             } else {
                 // running, waiting, etc.
-                $this->dispatch('ft-error', [
+                $this->dispatch('indeedOne-error', [
                     'success' => true,
                     'response' => $success,
                     'status' => $status,
@@ -231,7 +251,7 @@ class FrancetravailError extends Component
                 'error' => $e->getMessage(),
             ]);
 
-            $this->dispatch('ft-error', [
+            $this->dispatch('indeedOne-error', [
                 'success' => false,
                 'errorCode' => 408,
                 'errorMessage' => 'Le workflow met trop de temps à répondre.',
@@ -243,18 +263,18 @@ class FrancetravailError extends Component
                 'exception' => $e,
             ]);
 
-            $this->dispatch('ft-error', [
+            $this->dispatch('indeedOne-error', [
                 'success' => false,
                 'errorCode' => 500,
                 'errorMessage' => 'Erreur interne.',
                 'errorHint' => 'Consultez les logs pour plus de détails.',
             ]);
         }
-    } 
+    }
 
     public function render()
     {
-        return view('livewire.francetravail-error', [
+        return view('livewire.modal-indeed', [
             'success' => $this->success,
             'errorCode' => $this->errorCode,
             'errorMessage' => $this->errorMessage,

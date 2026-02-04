@@ -24,13 +24,13 @@ class OffresIndeed extends Component
         $query = ApifyIndeed::orderBy('date_insertion', 'desc');
 
         if ($this->searchOffres) {
-        $search = '%' . $this->searchOffres . '%';
-        $query->where(function($q) use ($search) {
-            $q->where('entreprise', 'like', $search)
-              ->orWhere('poste', 'like', $search)
-              ->orWhere('lieu', 'like', $search);
-        });
-    }
+            $search = '%' . $this->searchOffres . '%';
+            $query->where(function($q) use ($search) {
+                $q->where('entreprise', 'like', $search)
+                ->orWhere('poste', 'like', $search)
+                ->orWhere('lieu', 'like', $search);
+            });
+        }
 
         $offres = $query->paginate(50);
 

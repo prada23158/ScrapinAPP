@@ -21,7 +21,10 @@
                     :current="request()->routeIs('francetravail')" wire:navigate>{{ __('Mes Scrappings') }}
                 </flux:navlist.item>
                 <flux:navlist.item icon="bolt" :href="route('keywords')" :current="request()->routeIs('keywords')"
-                    wire:navigate>{{ __('Mots-clés') }}
+                    wire:navigate>{{ __('Mots-clés France Travail') }}
+                </flux:navlist.item>
+                <flux:navlist.item icon="bolt" :href="route('keywords-indeed')" :current="request()->routeIs('keywords-indeed')"
+                    wire:navigate>{{ __('Mots-clés Indeed') }}
                 </flux:navlist.item>
             </flux:navlist.group>
         </flux:navlist>

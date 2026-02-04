@@ -1,4 +1,4 @@
-<flux:modal name="francetravail-error" class="min-w-[96rem]">
+<flux:modal name="entreprises-francetravail" class="min-w-[96rem]">
     {{-- <p>composant: {{ get_class($this) }}</p> --}}
     <div class="space-y-6">
         @if (!$this->success)
@@ -17,12 +17,12 @@
                 </div>
 
                 <flux:text class="mt-2">
-                    <strong>{{ __('Message') }} :</strong> {{ $this->errorMessage ?? __('Erreur inconnue') }}
+                    <strong>{{ __('Message :') }} {{ $errorMessage }}</strong>
                 </flux:text>
 
                 @if ($this->errorHint)
                     <flux:text class="mt-2 text-sm">
-                        <strong>{{ __('Hint') }} :</strong> {{ $this->errorHint }}
+                        <strong>{{ __('Hint :') }} {{ $this->errorHint }}</strong>
                     </flux:text>
                 @endif
             </div>
@@ -41,14 +41,21 @@
                 </div>
                 @if ($data > 0)
                     <div class="mt-4 p-4 rounded bg-gray-100" wire:poll.5s="refreshCount">
+                        {{-- Offres trouvées --}}
                         <h3 class="text-lg font-medium mb-2">
-                            {{ __('Nombre de liens trouvés: ') }} {{ $data }}
+                            {{ __('Nombre d\'infos trouvées : ') }} {{ $data }}
                         </h3>
+                        {{-- entreprises restantes --}}
+                        @if ($offres_restantes > 0)
+                            <h3 class="text-lg font-medium mb-2">
+                                {{ __('Nombre d\'entreprises restantes : ') }} {{ $offres_restantes }}
+                            </h3>
+                        @endif
                     </div>
                 @else
                     <div class="mt-4 p-4 rounded">
                         <flux:text class="mt-2">
-                            {{ __('Aucun lien enregistré.') }}
+                            {{ __('Aucune info enregistrée.') }}
                         </flux:text>
                     </div>
                 @endif
@@ -58,26 +65,26 @@
                 <flux:badge variant='solid' color='green'>
                     {{ __('Terminé avec succès') }}
                 </flux:badge>
-
                 <div class="flex justify-center items-center">
                     <img src="success.png" alt="Success" class="w-16 h-16 mt-4 sm:h-32 sm:w-32">
                 </div>
-
-                <flux:text class="mt-2">
-                    {{ $response['message'] ?? 'Workflow démarré.' }}
-                    <br>
-                    {{ __('Veuillez patienter quelques instants avant de recharger la page.') }}
-                </flux:text>
                 @if ($data > 0)
                     <div class="mt-4 p-4 rounded bg-gray-100" wire:poll.5s="refreshCount">
+                        {{-- Offres trouvées --}}
                         <h3 class="text-lg font-medium mb-2">
-                            {{ __('Nombre de liens trouvés: ') }} {{ $data }}
+                            {{ __('Nombre d\'infos trouvées : ') }} {{ $data }}
                         </h3>
+                        {{-- entreprises restantes --}}
+                        @if ($offres_restantes > 0)
+                            <h3 class="text-lg font-medium mb-2">
+                                {{ __('Nombre d\'entreprises restantes : ') }} {{ $offres_restantes }}
+                            </h3>
+                        @endif
                     </div>
                 @else
                     <div class="mt-4 p-4 rounded">
                         <flux:text class="mt-2">
-                            {{ __('Aucun lien enregistré.') }}
+                            {{ __('Aucune info enregistrée.') }}
                         </flux:text>
                     </div>
                 @endif
@@ -85,23 +92,30 @@
         @elseif ($this->success && in_array($this->status, ['running', 'waiting']))
             <div class="mt-8 p-4 rounded bg-blue-50 border border-blue-200">
                 <flux:badge variant='solid' color='blue'>
-                    {{ __('En cours...') }}
+                    {{ __('En cours...') }} : {{ ucfirst($this->status) }}
                 </flux:badge>
                 <flux:text class="mt-2">
                     {{ __('Le workflow est en cours d\'exécution') }}
                 </flux:text>
                 {{-- <p class="mt-2">ID: {{ $executionId }}</p> --}}
+                {{-- succes: {{ $success }} --}}
             </div>
             @if ($data > 0)
                 <div class="mt-4 p-4 rounded bg-gray-100" wire:poll.5s="refreshCount">
                     <h3 class="text-lg font-medium mb-2">
-                        {{ __('Nombre de liens trouvés: ') }} {{ $data }}
+                        {{ __('Nombre d\'infos trouvées: ') }} {{ $data }}
                     </h3>
+                    {{-- entreprises restantes --}}
+                    @if ($offres_restantes > 0)
+                        <h3 class="text-lg font-medium mb-2">
+                            {{ __('Nombre d\'entreprises restantes : ') }} {{ $offres_restantes }}
+                        </h3>
+                    @endif
                 </div>
             @else
                 <div class="mt-4 p-4 rounded">
                     <flux:text class="mt-2">
-                        {{ __('Aucun lien enregistré.') }}
+                        {{ __('Aucune info enregistrée.') }}
                     </flux:text>
                 </div>
             @endif

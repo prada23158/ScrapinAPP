@@ -20,8 +20,10 @@ Route::view('dashboard', 'dashboard')
 Route::view('utilisateurs', 'utilisateurs')
     ->middleware(['auth', 'verified'])
     ->name('utilisateurs');
-// les mots clés
+// les mots clés France Travail
 Route::view('keywords','keywords')->middleware(['auth','verified'])->name('keywords');
+// les mots clés Indeed
+Route::view('keywords-indeed','keywords-indeed')->middleware(['auth','verified'])->name('keywords-indeed');
 // Scrapping routes debut
 Route::view('agents', 'agents')
     ->middleware(['auth', 'verified'])

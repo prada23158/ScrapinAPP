@@ -1,16 +1,20 @@
 <?php
 
 namespace App\Livewire;
+
 use Livewire\Component;
-use Livewire\Attributes\On;
+use App\Models\OffresFT;
 use App\Models\LinksFT;
 use Carbon\Carbon;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\ConnectionException;
+use Flux\Flux;
+use Livewire\Attributes\On;
 
-class FrancetravailError extends Component
+
+class InfosFranceTravail extends Component
 {
-
+    // Propriétés d'état
     public bool $success = true;
     public ?string $errorCode = null;
     public ?string $errorMessage = null;
@@ -22,32 +26,69 @@ class FrancetravailError extends Component
     public $response = null;
     public string $apiKey = '';
     public string $workflowID = '';
+    public int $linksScrapped = 0;
+    public int $linksNotScrapped = 0;
+    public int $offresScrapped = 0;
+    public int $offresNotScrapped = 0;
 
-    // Propriétés privées pour la configuration
+
+    // Configuration
     private string $railway_host;
-    private string $workflowUrl;
+    private string $workflowUrl2;
 
     public function mount(): void
     {
-        $this->workflowUrl = config('services.n8n-prod.stepone_francetravail_prod') ?? '';
+        $this->workflowUrl2 = config('services.n8n-prod.steptwo_francetravail_prod') ?? '';
         $this->railway_host = config('services.RAILWAY_HOST.railway_host');
-        $this->refreshCount(); // ✅ calcule data une fois au chargement
+        $this->refreshCount();
     }
 
-    protected $listeners = ['refreshLinksCount' => 'refreshCount'];
+    protected $listeners = ['refreshOffresCount' => 'refreshCount'];
+
+    /**
+     * Méthode optimisée pour récupérer toutes les statistiques en une seule requête
+     */
+    public function getAllStats(): array
+    {
+
+        // offres trouvées au total
+        $offresCount = OffresFT::whereNotNull('created_at')
+        ->selectRaw('SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as scrapped_count,
+                    SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as not_scrapped_count,
+                    COUNT(*) as offres')
+                    ->first();
+
+        // liens scrappés et non scrappés (offres restantes)
+        $linksStats = LinksFT::whereNotNull('created_aat')
+            ->selectRaw('
+                SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as scrapped,
+                SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as not_scrapped, 
+                COUNT(*) as liens_total
+            ')
+            ->first();
+
+        return [
+            'offres' => $offresCount->offres ?? 0,
+            'offres_scrapped' => $offresCount->scrapped_count ?? 0,
+            'offres_not_scrapped' => $offresCount->not_scrapped_count ?? 0,
+            'links_scrapped' => $linksStats->scrapped ?? 0,
+            'links_not_scrapped' => $linksStats->not_scrapped ?? 0,
+            // 'links_total' => $linksStats->total ?? 0,
+        ];
+    }
 
     public function refreshCount(): void
     {
-        $this->data = $this->getLinksCountToday();
+        $stats = $this->getAllStats();
+
+        $this->data = $stats['offres'];
+        $this->offresScrapped = $stats['offres_scrapped'];
+        $this->offresNotScrapped = $stats['offres_not_scrapped'];
+        $this->linksScrapped = $stats['links_scrapped'];
+        $this->linksNotScrapped = $stats['links_not_scrapped'];
     }
 
-    // compter le nombre liens enregistrés aujourd'hui dans la table links_ft
-    public function getLinksCountToday(): int
-    {
-        return LinksFT::count(); // ✅ created_at
-    }
-
-    #[On('ft-error')]
+    #[On('infos-error')]
     public function setError(array $data): void
     {
         $this->success = false;
@@ -63,7 +104,7 @@ class FrancetravailError extends Component
         
     }
 
-    #[On('ft-success')]
+    #[On('infos-success')]
     public function setSuccess(array $data): void
     {
         $this->success = (bool) ($data['success'] ?? true);
@@ -81,32 +122,28 @@ class FrancetravailError extends Component
         $this->refreshCount();
     }
 
-    public function stepOneFrancetravailWorkflow()
+    public function stepTwoFrancetravailWorkflow()
     {
-        $this->workflowUrl = config('services.n8n-prod.stepone_francetravail_prod');
-        // $this->workflowUrl = config('services.n8n-test.stepone_francetravail_test');
-        // récuperer la dernière exécution du workflow
+        $this->workflowUrl2 = config('services.n8n-prod.steptwo_francetravail_prod');
+        // $this->workflowUrl2 = config('services.n8n-test.steptwo_francetravail_test');
         $this->railway_host = config('services.RAILWAY_HOST.railway_host');
-        // api_Key n8n
         $this->apiKey = config('services.n8n.api_key');
-        // ID Workflow n8n
-        $this->workflowID = config('services.n8n.workflow_One_ID_FT');
-        // Envoyer une requête POST au workflow externe
-        // z$response = Http::get($this->workflowUrl);
-        // dd($response->json());
+        $this->workflowID = config('services.n8n.workflow_Two_ID_FT');
+
+        // ❌ RETIREZ CECI :
         // dd("1");
 
         try {
             // ⏱️ Timeout court : on ne bloque jamais l’UI
-            $response = Http::timeout(10)->get($this->workflowUrl);
+            $response = Http::timeout(10)->get($this->workflowUrl2);
             sleep(5);
             // Obtenir la dernière exécution du workflow via l'API n8n
             $data = Http::withHeaders([
                 'X-N8N-API-KEY' => config('services.n8n.api_key')
             ])
-                ->timeout(30)
+                ->timeout(10)
                 ->get($this->railway_host . '/api/v1/executions', [
-                    'workflowId' => config('services.n8n.workflow_One_ID_FT'),
+                    'workflowId' => config('services.n8n.workflow_Two_ID_FT'),
                     'limit' => 1
                 ]);
 
@@ -124,7 +161,7 @@ class FrancetravailError extends Component
                     'hint' => $hint,
                 ]);
 
-                $this->dispatch('ft-error', [
+                $this->dispatch('infos-error', [
                     'success' => false,
                     'errorCode' => $code,
                     'errorMessage' => $message,
@@ -142,7 +179,7 @@ class FrancetravailError extends Component
                     'message' => $message
                 ]);
 
-                $this->dispatch('ft-error', [
+                $this->dispatch('infos-error', [
                     'success' => false,
                     'status' => 'error',
                     'finished' => 'false',
@@ -164,7 +201,7 @@ class FrancetravailError extends Component
             // dd($execution);
             if (!$execution) {
                 logger()->warning('Aucune exécution trouvée');
-                $this->dispatch('ft-error', [
+                $this->dispatch('infos-error', [
                     'success' => false,
                     'errorCode' => 404,
                     'errorMessage' => 'Aucune exécution trouvée',
@@ -196,7 +233,7 @@ class FrancetravailError extends Component
 
             // ⚠️ Attention : dispatch correct selon le statut
             if ($status === 'success' && $finished) {
-                $this->dispatch('ft-success', [
+                $this->dispatch('infos-success', [
                     'success' => true,
                     'response' => $success,
                     'status' => $status,
@@ -204,8 +241,8 @@ class FrancetravailError extends Component
                     'startedAt' => $startedAt,
                     'stoppedAt' => $stoppedAt,
                 ]);
-            } elseif (in_array($status, ['error', 'failed'])) {
-                $this->dispatch('ft-error', [
+            } elseif (in_array($status, ['error', 'failed','canceled'])) {
+                $this->dispatch('infos-error', [
                     'success' => false,
                     'response' => $success,
                     'status' => $status,
@@ -215,7 +252,7 @@ class FrancetravailError extends Component
                 ]);
             } else {
                 // running, waiting, etc.
-                $this->dispatch('ft-error', [
+                $this->dispatch('infos-error', [
                     'success' => true,
                     'response' => $success,
                     'status' => $status,
@@ -227,11 +264,11 @@ class FrancetravailError extends Component
         } catch (ConnectionException $e) {
             // ❌ Timeout / réseau / SSL
             logger()->error('Connexion impossible vers n8n', [
-                'url' => $this->workflowUrl,
+                'url' => $this->workflowUrl2,
                 'error' => $e->getMessage(),
             ]);
 
-            $this->dispatch('ft-error', [
+            $this->dispatch('infos-error', [
                 'success' => false,
                 'errorCode' => 408,
                 'errorMessage' => 'Le workflow met trop de temps à répondre.',
@@ -243,18 +280,18 @@ class FrancetravailError extends Component
                 'exception' => $e,
             ]);
 
-            $this->dispatch('ft-error', [
+            $this->dispatch('infos-error', [
                 'success' => false,
                 'errorCode' => 500,
                 'errorMessage' => 'Erreur interne.',
                 'errorHint' => 'Consultez les logs pour plus de détails.',
             ]);
         }
-    } 
+    }
 
     public function render()
     {
-        return view('livewire.francetravail-error', [
+        return view('livewire.infos-francetravail', [
             'success' => $this->success,
             'errorCode' => $this->errorCode,
             'errorMessage' => $this->errorMessage,
@@ -264,5 +301,4 @@ class FrancetravailError extends Component
             'status' => $this->status,
         ]);
     }
-
 }

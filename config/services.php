@@ -37,16 +37,46 @@ return [
 
     'n8n' => [
         'api_key' => env('API_KEY'),
-        'workflow_One_ID_FT' => env('WORKFLOW_ONE_ID_FRANCETRAVAIL'),
         'railway_host' => env('RAILWAY_HOST', 'https://primary-production-cd85.up.railway.app'),
+        // France Travail Workflows IDs
+        'workflow_One_ID_FT' => env('WORKFLOW_ONE_ID_FRANCETRAVAIL'),
+        'workflow_Two_ID_FT' => env('WORKFLOW_TWO_ID_FRANCETRAVAIL'),
+        'workflow_Three_ID_FT' => env('WORKFLOW_THREE_ID_FRANCETRAVAIL'),
+        'workflow_Four_ID_FT' => env('WORKFLOW_FOUR_ID_FRANCETRAVAIL'),
+        'workflow_Tel_ID_FT' => env('WORKFLOW_TEL_ID_FRANCETRAVAIL'),
+        // Indeed Workflows IDs
+        'workflow_One_ID_INDEED' => env('WORKFLOW_ONE_ID_INDEED'),
+        'workflow_Two_ID_INDEED' => env('WORKFLOW_TWO_ID_INDEED'),
+        'workflow_Three_ID_INDEED' => env('WORKFLOW_THREE_ID_INDEED'),
+        'workflow_Tel_ID_INDEED' => env('WORKFLOW_TEL_ID_INDEED'),
     ],
 
     'n8n-prod' => [
+        // France Travail Workflows PROD
         'stepone_francetravail_prod' => env('N8N_StepOne_FRANCETRAVAIL_PROD'),
+        'steptwo_francetravail_prod' => env('N8N_StepTwo_FRANCETRAVAIL_PROD'),
+        'stepthree_francetravail_prod' => env('N8N_StepThree_FRANCETRAVAIL_PROD'),
+        'stepfour_francetravail_prod' => env('N8N_StepFour_FRANCETRAVAIL_PROD'),
+        'steptel_francetravail_prod' => env('N8N_StepTel_FRANCETRAVAIL_PROD'),
+        // Indeed Workflows PROD
+        'stepone_indeed_prod' => env('N8N_StepOne_INDEED_PROD'),
+        'steptwo_indeed_prod' => env('N8N_StepTwo_INDEED_PROD'),
+        'stepthree_indeed_prod' => env('N8N_StepThree_INDEED_PROD'),
+        'steptel_indeed_prod' => env('N8N_StepTel_INDEED_PROD'),
     ],
 
     'n8n-test' => [
+        // France Travail Workflows TEST
         'stepone_francetravail_test' => env('N8N_StepOne_FRANCETRAVAIL_TEST'),
+        'steptwo_francetravail_test' => env('N8N_StepTwo_FRANCETRAVAIL_TEST'),
+        'stepthree_francetravail_test' => env('N8N_StepThree_FRANCETRAVAIL_TEST'),
+        'stepfour_francetravail_test' => env('N8N_StepFour_FRANCETRAVAIL_TEST'),
+        'steptel_francetravail_test' => env('N8N_StepTel_FRANCETRAVAIL_TEST'),
+        // Indeed Workflows TEST
+        'stepone_indeed_test' => env('N8N_StepOne_INDEED_TEST'),
+        'steptwo_indeed_test' => env('N8N_StepTwo_INDEED_TEST'),
+        'stepthree_indeed_test' => env('N8N_StepThree_INDEED_TEST'),
+        'steptel_indeed_test' => env('N8N_StepTel_INDEED_TEST'),
     ],
 
     'RAILWAY_HOST' => [

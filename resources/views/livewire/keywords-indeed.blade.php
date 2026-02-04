@@ -1,4 +1,6 @@
 <div class="flex justify-between">
+    {{-- <p>composant: {{ get_class($this) }}</p> --}}
+    {{-- <p>{{ $message }}</p> --}}
     <div class="p-6 bg-white rounded-lg shadow-lg m-4 order-first">
         <div class="mb-4">
             <flux:heading size="md">Ajouter un mot-clé</flux:heading>
@@ -32,7 +34,7 @@
         <div class="mb-4">
             <flux:heading size="md">Mots-clés existants</flux:heading>
             <flux:text>Liste des mots-clés ajoutés pour les offres d'emploi.</flux:text>
-            
+
         </div>
         <div class="overflow-x-auto">
             <div class="space-y-6 border border-neutral-200 dark:border-neutral-700 p-4 rounded-lg">
@@ -58,10 +60,11 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <?php $i = 1; ?>
                         @foreach ($keywords as $keyword)
                             <tr class="even:bg-neutral-50 dark:even:bg-neutral-700/50">
                                 <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
-                                    {{ $keyword->id }}
+                                    {{ $i++ }}
                                 </td>
                                 <td class="border border-neutral-300 px-4 py-2 dark:border-neutral-600">
                                     {{ $keyword->metiers }}
@@ -99,21 +102,6 @@
                     </tbody>
                 </table>
             </div>
-            {{-- @if ($message)
-                <flux:toast position="top end" />
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        Flux.toast.success("{{ $message }}");
-                    });
-                </script>
-                
-            @endif --}}
-            <!-- Pagination -->
-            {{-- @if ($keywords->hasPages())
-                <div class="mt-6 flex justify-center">
-                    {{ $keywords->links('pagination::tailwind') }}
-                </div>
-            @endif --}}
             {{ $keywords->links() }}
         </div>
     </div>

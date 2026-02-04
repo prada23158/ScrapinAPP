@@ -3,31 +3,29 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\Keyword;
+use App\Models\KeyIndeed;
 use Livewire\WithPagination;
-use Livewire\Attributes\On;
 use Flux\Flux;
 
-class Keywords extends Component
+class KeywordsIndeed extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'tailwind';
 
-    // public $keywords;
+    // Propriétés publiques pour stocker les mots-clés et les villes
     public string $metiers = '';
     public string $villes = '';
     public string $date_insertion = '';
     public string $updated_aat = '';
     public $searchKeywords = '';
-
+    
     public function clearSearch()
     {
         $this->searchKeywords = '';
         $this->resetPage();
     }
 
-
-        public function createKeyword(): void
+    public function createKeyword(): void
     {
         $this->validate([
             'metiers' => 'required|string|max:255',
@@ -36,7 +34,7 @@ class Keywords extends Component
             'updated_aat' => 'nullable|date',
         ]);
 
-        Keyword::create([
+        KeyIndeed::create([
             'metiers' => $this->metiers,
             'villes' => $this->villes,
             'date_insertion' => now(),
@@ -54,23 +52,23 @@ class Keywords extends Component
 
         // Optionnel: Afficher un message de succès
         // Flux::success(message:"Keyword added successfully.");
-        Flux::toast('Mot clé ajouté avec succès.', variant: 'success');
+        // Flux::toast('Mot clé ajouté avec succès.', variant: 'success');
     }
 
     // suppression d'un mot clé
     public function deleteKeyword(int $keywordId): void
     {
-        $keyword = Keyword::findOrFail($keywordId);
+        $keyword = KeyIndeed::findOrFail($keywordId);
         $keyword->delete();
         // Réinitialiser la pagination à la page 1
         $this->resetPage();
-        Flux::toast('Mot clé supprimé avec succès.', variant: 'success');
+        // Flux::toast('Mot clé supprimé avec succès.', variant: 'success');
     }
 
     // Activer un mot clé
     public function activateKeyword(int $keywordId): void
     {
-        $keyword = Keyword::findOrFail($keywordId);
+        $keyword = KeyIndeed::findOrFail($keywordId);
         $keyword->statut = 0; // Supposons que 0 signifie "activé"
         $keyword->save();
         // Dispatch un événement
@@ -80,7 +78,7 @@ class Keywords extends Component
     // Désactiver un mot clé
     public function deactivateKeyword(int $keywordId): void
     {
-        $keyword = Keyword::findOrFail($keywordId);
+        $keyword = KeyIndeed::findOrFail($keywordId);
         $keyword->statut = 1; // Supposons que 1 signifie "désactivé"
         $keyword->save();
         $keyword->message='Le mot clé est désactivé.';
@@ -98,34 +96,28 @@ class Keywords extends Component
         Flux::modal('keyword-edit' , $id)->show();
     }
 
+    // obtenir les mots-clés et les villes depuis la base de données
+
     public function render()
     {
-        // Construire la requête AVANT paginate()
-        $query = Keyword::orderBy('date_insertion', 'desc');
+        $query = KeyIndeed::orderBy('date_insertion', 'desc');
 
-        // Appliquer le filtre si nécessaire
-        if ($this->searchKeywords) {
-                $search = '%' . $this->searchKeywords . '%';
-                $query->where(function($q) use ($search) {
-                    $q->where('metiers', 'like', $search)
-                    ->orWhere('villes', 'like', $search);
-                });
-            }
+        // if (!empty($this->searchKeywords)) {
+        //     $query->where(function ($q) {
+        //         $q->where('metiers', 'like', '%' . $this->searchKeywords . '%')
+        //           ->orWhere('villes', 'like', '%' . $this->searchKeywords . '%');
+        //     });
+        // }
 
-        // Appeler paginate() EN DERNIER
         $keywords = $query->paginate(5);
 
-        // Option 1: Pass as array (recommended)
-        return view('livewire.keywords', [
+        // $keywordsIndeed = KeywordIndeed::all();
+
+        $message = 'Composant KeywordsIndeed chargé avec succès.';
+        return view('livewire.keywords-indeed', [
             'keywords' => $keywords,
-            'message' => $message ?? null,
+            // 'message' => $message,
         ]);
-        
-        // Option 2: Use compact (alternative)
-        // return view('livewire.keywords', compact('keywords'));
-        
-        // Option 3: Use with() method (alternative)
-        // return view('livewire.keywords')->with('keywords', $keywords);
+        // ->with('keywordIndeed', $keywordIndeed);
     }
-    
 }
