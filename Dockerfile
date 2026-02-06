@@ -1,10 +1,12 @@
+# Stage 1 : Compiler les assets avec Node
 FROM node:20 AS node-builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 COPY . .
 RUN npm run build
 
+# Stage 2 : Image PHP finale
 FROM php:8.3-fpm
 
 # Installer les dépendances système
