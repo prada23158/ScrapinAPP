@@ -5,6 +5,8 @@ COPY package*.json ./
 RUN npm ci
 COPY . .
 RUN npm run build
+# Vérifier que le build a créé les fichiers
+RUN ls -la public/build/ || echo "ERREUR: public/build n'existe pas!"
 
 # Stage 2 : Image PHP finale
 FROM php:8.3-fpm
@@ -35,6 +37,9 @@ COPY . .
 
 # Copier les assets compilés depuis node-builder
 COPY --from=node-builder /app/public/build ./public/build
+
+# Vérifier que les fichiers ont bien été copiés
+RUN ls -la public/build/ && cat public/build/manifest.json || echo "ERREUR: manifest.json absent!"
 
 # Installer les dépendances PHP
 RUN composer install --optimize-autoloader --no-dev --no-interaction
