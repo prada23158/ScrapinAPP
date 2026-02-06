@@ -1,3 +1,10 @@
+FROM node:20 AS node-builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
 FROM php:8.3-fpm
 
 # Installer les dépendances système
@@ -24,7 +31,10 @@ WORKDIR /var/www
 # Copier les fichiers
 COPY . .
 
-# Installer les dépendances
+# Copier les assets compilés depuis node-builder
+COPY --from=node-builder /app/public/build ./public/build
+
+# Installer les dépendances PHP
 RUN composer install --optimize-autoloader --no-dev --no-interaction
 
 # Supprimer les fichiers de cache
@@ -39,6 +49,5 @@ RUN chown -R www-data:www-data /var/www \
 
 EXPOSE 8080
 
-# Démarrage
 CMD php artisan migrate --force && \
     php artisan serve --host=0.0.0.0 --port=8080
