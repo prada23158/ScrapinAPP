@@ -3,7 +3,7 @@ pipeline {
     agent any
     
     environment {
-        APP_NAME = 'ScrappingOffresEmploi'
+        APP_NAME = 'myapp'
         VERSION = "${env.BUILD_NUMBER}"
     }
     
