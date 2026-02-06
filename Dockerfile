@@ -36,17 +36,9 @@ RUN rm -rf bootstrap/cache/*.php \
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www/storage \
     && chmod -R 755 /var/www/bootstrap/cache
-    
+
 EXPOSE 8080
 
-# Script de démarrage avec debug
-CMD echo "=== DEBUG DATABASE CONNECTION ===" && \
-    echo "DB_HOST: $DB_HOST" && \
-    echo "DB_PORT: $DB_PORT" && \
-    echo "DB_DATABASE: $DB_DATABASE" && \
-    echo "DB_USERNAME: $DB_USERNAME" && \
-    echo "Testing connection..." && \
-    nc -zv $DB_HOST $DB_PORT && \
-    echo "=== END DEBUG ===" && \
-    php artisan migrate --force && \
+# Démarrage
+CMD php artisan migrate --force && \
     php artisan serve --host=0.0.0.0 --port=8080
