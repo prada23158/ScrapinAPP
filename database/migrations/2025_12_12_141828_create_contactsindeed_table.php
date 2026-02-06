@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('contact3')->nullable();
             $table->string('contact4')->nullable();
             $table->string('contact5')->nullable();
-            $table->timestamp('date_insertion')->default(now());
+            $table->timestamp('date_insertion');
             $table->boolean('statut');
         });
     }
