@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('entreprise')->nullable();
             $table->string('telephone', length:20)->nullable();
             $table->string('keywords')->nullable();
-            $table->timestamp('created_aat')->default(now());
+            $table->timestamp('created_aat');
             $table->string('updated_aat')->nullable();
             $table->boolean('status')->default(0);
         });
