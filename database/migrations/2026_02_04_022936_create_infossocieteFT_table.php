@@ -29,7 +29,7 @@ return new class extends Migration
             $table->text('website1')->nullable();
             $table->text('website2')->nullable();
             $table->text('website3')->nullable();
-            $table->timestamp('date_insertion')->default(now());
+            $table->timestamp('date_insertion');
             $table->boolean('statut')->default(0);
             $table->timestamps();
         });
