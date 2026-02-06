@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::create('num_entreprise', function (Blueprint $table) {
-            $table->id();
-            $table->string('entreprise')->nullable();
-            $table->string('telephone')->nullable();
-            $table->string('place_id')->nullable();
-            $table->string('row_lien')->nullable();
+        Schema::create('num_indeed', function (Blueprint $table) {
+            $table->increments('id');
+            $table->text('entreprise')->nullable();
+            $table->text('telephone')->nullable();
+            $table->text('place_id')->nullable();
+            $table->text('adresse')->nullable();
+            $table->integer('row_lien')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
     public function down(): void
     {
         //
-        Schema::dropIfExists('num_entreprise');
+        Schema::dropIfExists('num_indeed');
     }
 };

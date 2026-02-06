@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::create('contacts', function (Blueprint $table) {
+        Schema::create('contactsindeed', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->integer('id_entreprise');
             $table->text('entreprise');
@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('contact3')->nullable();
             $table->string('contact4')->nullable();
             $table->string('contact5')->nullable();
-            $table->text('row_lien')->nullable();
-            $table->timestamps();
+            $table->timestamp('date_insertion')->default(now());
+            $table->boolean('statut');
         });
     }
 
@@ -32,5 +32,6 @@ return new class extends Migration
     public function down(): void
     {
         //
+        Schema::dropIfExists('contactsindeed');
     }
 };
