@@ -39,6 +39,14 @@ RUN chown -R www-data:www-data /var/www \
     
 EXPOSE 8080
 
-# Script de démarrage - SANS config:cache car il utilise les anciennes valeurs
-CMD php artisan migrate --force && \
+# Script de démarrage avec debug
+CMD echo "=== DEBUG DATABASE CONNECTION ===" && \
+    echo "DB_HOST: $DB_HOST" && \
+    echo "DB_PORT: $DB_PORT" && \
+    echo "DB_DATABASE: $DB_DATABASE" && \
+    echo "DB_USERNAME: $DB_USERNAME" && \
+    echo "Testing connection..." && \
+    nc -zv $DB_HOST $DB_PORT && \
+    echo "=== END DEBUG ===" && \
+    php artisan migrate --force && \
     php artisan serve --host=0.0.0.0 --port=8080
