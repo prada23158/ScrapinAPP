@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('entreprise')->nullable();
             $table->string('telephone', length:32)->nullable();
             $table->string('place_id', length:64)->nullable();
-            $table->timestamp('created_at')->default(now());
+            $table->timestamp('created_at');
             $table->integer('row_lien')->unique()->nullable();
         });
     }
