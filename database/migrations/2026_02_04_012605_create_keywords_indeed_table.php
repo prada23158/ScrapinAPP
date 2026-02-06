@@ -17,7 +17,7 @@ return new class extends Migration
             $table->increments('id');
             $table->text('metiers')->nullable();
             $table->text('villes')->nullable();
-            $table->timestamp('date_insertion')->default(now());
+            $table->timestamp('date_insertion');
             $table->timestamp('updated_aat')->nullable();
             $table->boolean('statut')->default(0);
             $table->timestamps();
