@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('page_URL')->nullable();  
             $table->string('societe')->nullable();  
             $table->string('row_lien')->nullable();  
-            $table->timestamp('date_insertion')->default(now());
+            $table->timestamp('date_insertion');
             $table->boolean('statut')->default(0);  
             $table->boolean('num_scrapped')->default(0);  
             $table->timestamps();
